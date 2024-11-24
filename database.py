@@ -1,21 +1,20 @@
-# database.py
-import pyodbc
 import os
-from dotenv import load_dotenv
+import pyodbc
 
-load_dotenv()
-
-# Set up a connection to your SQL Server database
 def get_db_connection():
+    server = os.environ['DB_SERVER']
+    database = os.environ['DB_NAME']
+    username = os.environ['DB_USER']
+    password = os.environ['DB_PASSWORD']
+
     conn = pyodbc.connect(
         f"DRIVER={{ODBC Driver 17 for SQL Server}};"
-        f"SERVER={os.environ['DB_SERVER']};"
-        f"DATABASE={os.environ['DB_NAME']};"
-        f"UID={os.environ['DB_USER']};"
-        f"PWD={os.environ['DB_PASSWORD']}"
+        f"SERVER={server};"
+        f"DATABASE={database};"
+        f"UID={username};"
+        f"PWD={password}"
     )
     return conn
-
 
 # Insert jobs into the database
 def insert_jobs(jobs):
