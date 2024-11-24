@@ -1,0 +1,77 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Scraper - CRUD Interface</title>
+</head>
+<body>
+    <h1>Job Scraper - CRUD Operations</h1>
+
+    <!-- Create Job -->
+    <h2>Create Job</h2>
+    <form id="createJobForm">
+        <input type="text" id="title" placeholder="Title" required><br>
+        <input type="text" id="company" placeholder="Company" required><br>
+        <input type="text" id="location" placeholder="Location" required><br>
+        <input type="text" id="link" placeholder="Job Link" required><br>
+        <button type="submit">Create Job</button>
+    </form>
+
+    <hr>
+
+    <!-- List All Jobs -->
+    <h2>Jobs</h2>
+    <ul id="jobList"></ul>
+
+    <script>
+        document.getElementById("createJobForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const job = {
+                title: document.getElementById("title").value,
+                company: document.getElementById("company").value,
+                location: document.getElementById("location").value,
+                link: document.getElementById("link").value,
+            };
+
+            const response = await fetch('/jobs', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(job),
+            });
+
+            const result = await response.json();
+            alert(result.message);
+            loadJobs();
+        });
+
+        async function loadJobs() {
+            const response = await fetch('/jobs');
+            const data = await response.json();
+            const jobList = document.getElementById("jobList");
+            jobList.innerHTML = '';
+            data.jobs.forEach(job => {
+                const li = document.createElement("li");
+                li.innerHTML = `<strong>${job.title}</strong> at ${job.company}, ${job.location}
+            - <a href="${job.link}" target="_blank">View Job</a>
+            <a href="#" onclick="deleteJob(${job.id})">Delete</a>`;
+                jobList.appendChild(li);
+            });
+        }
+
+        async function deleteJob(jobId) {
+            const response = await fetch(`/jobs/${jobId}`, {
+                method: 'DELETE',
+            });
+
+            const result = await response.json();
+            alert(result.message);
+            loadJobs();
+        }
+
+        loadJobs();
+    </script>
+</body>
+</html>
