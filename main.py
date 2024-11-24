@@ -5,11 +5,17 @@ from fastapi.templating import Jinja2Templates
 from scraper import scrape_jobs
 from database import insert_jobs, get_all_jobs, get_job_by_id, update_job, delete_job, delete_jobs
 from pydantic import BaseModel
-
+from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 templates = Jinja2Templates(directory="templates")
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Update this to a list of specific domains for better security
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],  # Allow all headers
+)
 
 # Pydantic model for job data validation
 class Job(BaseModel):
